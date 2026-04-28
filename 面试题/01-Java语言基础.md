@@ -2,95 +2,78 @@
 
 ---
 
-## 一、数据类型与基础语法
+## 一、语言模型与代码表达
 
-1. Java 基本数据类型有哪些？各占多少字节？
-2. 自动装箱与拆箱的原理？Integer 缓存池（-128~127）是怎么回事？
-3. String、StringBuilder、StringBuffer 的区别？String 为什么是不可变的？
-4. String 的 intern() 方法有什么作用？字符串常量池在哪里？
-5. == 和 equals() 的区别？hashCode() 和 equals() 的关系？
-6. final、finally、finalize 的区别？
-7. 值传递和引用传递？Java 是值传递还是引用传递？
+1. Java 的值传递模型在对象引用场景下容易产生哪些误解？请用一个方法调用例子说明。
+2. `equals()` / `hashCode()` / `compareTo()` 的契约分别是什么？违反契约会在集合或排序中造成什么问题？
+3. `String` 为什么适合作为不可变值对象？字符串拼接、`intern()`、常量池在实际项目中有哪些需要注意的点？
+4. 自动装箱、拆箱在性能和空指针上有哪些坑？什么时候应该优先使用基本类型？
+5. 你如何设计一个不可变对象？字段、集合、构造器、防御性拷贝分别要注意什么？
+6. `record` 适合解决什么问题？它和普通 Java Bean、Lombok `@Data` 的边界分别在哪里？
+7. `sealed class/interface` 能改善哪些建模问题？和枚举、普通继承相比如何取舍？
+8. `switch` 表达式、模式匹配、文本块等现代语法特性，哪些能真实提升代码可读性？哪些场景不建议滥用？
 
-## 二、面向对象
+## 二、面向对象与 API 设计
 
-1. 面向对象三大特性（封装、继承、多态）分别怎么理解？
-2. 重载（Overload）和重写（Override）的区别？
-3. 抽象类和接口的区别？什么时候用抽象类，什么时候用接口？
-4. Java 为什么不支持多继承？接口的默认方法（default method）解决了什么问题？
-5. 深拷贝和浅拷贝的区别？如何实现深拷贝？
-6. Object 类有哪些常用方法？
+1. 继承、组合、接口默认方法分别适合什么扩展场景？为什么很多业务代码更推荐组合？
+2. 抽象类和接口如何选型？如果你要设计支付渠道、设备协议、存储适配器，会怎么拆分接口？
+3. 重载和重写在 API 演进中有哪些兼容性风险？如何避免调用方出现二义性或行为变化？
+4. 深拷贝、浅拷贝、防御性拷贝分别解决什么问题？在 DTO、缓存、配置对象中如何取舍？
+5. `Optional` 适合放在返回值、字段、参数中的哪些位置？为什么不建议把它当成万能的空值容器？
+6. 业务代码里如何控制方法粒度和对象职责，避免“贫血模型”和“上帝 Service”？
 
-## 三、异常处理
+## 三、异常与错误处理
 
-1. Java 异常体系结构？Throwable、Error、Exception 的继承关系？
-2. Error 和 Exception 的区别？分别举几个常见的例子？
-3. Checked Exception 和 Unchecked Exception 的区别？为什么有这两种设计？
-4. RuntimeException 有哪些常见子类？NullPointerException、IllegalArgumentException、IndexOutOfBoundsException 等？
-5. try-catch-finally 的执行顺序？finally 中的 return 会怎样？try 中 return 了 finally 还会执行吗？
-6. try-with-resources 是什么？解决了什么问题？AutoCloseable 接口的作用？
-7. 多个 catch 块的匹配顺序？为什么子类异常要放在前面？
-8. throw 和 throws 的区别？
-9. 自定义异常的最佳实践？什么时候该自定义异常？
-10. 异常对性能的影响？为什么不建议用异常做流程控制？
-11. 异常链（Exception Chaining）是什么？Cause 的作用？
-12. Spring 中的全局异常处理方案？@ControllerAdvice + @ExceptionHandler？
-13. 项目中你是怎么设计异常体系的？业务异常和系统异常怎么区分？
+1. Java 异常体系如何服务于工程设计？哪些异常应该向上抛，哪些应该在边界层转换？
+2. Checked Exception 和 Unchecked Exception 在团队协作中各有什么代价？你会如何制定使用规范？
+3. 业务异常、参数异常、系统异常、下游异常应该如何分层？错误码、错误消息、日志上下文如何设计？
+4. `try-with-resources` 解决了什么资源释放问题？多个资源关闭时异常会如何保留？
+5. 为什么不建议用异常做普通流程控制？在高频失败场景下应如何表达失败结果？
+6. 全局异常处理如何和接口响应、链路追踪、告警系统配合，避免吞掉真正的问题？
+7. 线上出现大量同类异常时，你会看哪些维度判断是代码 bug、数据问题还是下游故障？
 
-## 四、泛型
+## 四、泛型与类型安全
 
-1. 什么是泛型？泛型的好处是什么？
-2. 泛型擦除是什么？有什么影响？
-3. 上界通配符（? extends T）和下界通配符（? super T）的区别？PECS 原则？
-4. 泛型方法和泛型类的区别？
+1. 泛型擦除带来了哪些限制？运行时如何安全地保留或传递类型信息？
+2. `? extends T` 和 `? super T` 的差异是什么？请用“读取集合”和“写入集合”的例子说明 PECS 原则。
+3. 设计通用组件时，什么时候使用泛型类、泛型方法、类型令牌（Type Token）？
+4. Jackson、Spring、MyBatis 等框架在处理泛型返回值或集合映射时为什么容易丢类型？如何解决？
+5. 原始类型（raw type）会带来什么风险？代码评审时如何识别这类隐患？
 
-## 五、注解
+## 五、注解与元编程
 
-1. 什么是注解？注解的本质是什么？（特殊的接口）
-2. 注解的分类？源码级、编译级、运行时注解的区别？
-3. 元注解有哪些？@Target、@Retention、@Documented、@Inherited、@Repeatable 各自的作用？
-4. @Retention 的三种策略？SOURCE、CLASS、RUNTIME 的区别？什么时候用哪种？
-5. 如何自定义一个注解？自定义注解的属性有什么限制？
-6. 注解是怎么被解析的？编译期处理（APT）vs 运行时反射？
-7. 注解处理器（Annotation Processor）的原理？Lombok 是怎么实现的？
-8. Spring 中常用注解的原理？@Component、@Autowired、@Transactional 是怎么生效的？
-9. 注解和 XML 配置的对比？各自的优缺点？
-10. 如何实现一个自定义的 @Log 注解来做方法级别的日志记录？
+1. 注解适合表达哪些元信息？什么时候注解会让代码变得隐式、难排查？
+2. 运行时反射解析注解和编译期注解处理器（APT）各适合什么场景？
+3. 如果实现一个 `@AuditLog` 或 `@Idempotent` 注解，你会如何设计属性、作用范围和默认值？
+4. Lombok、MapStruct、Spring Configuration Processor 分别属于哪类注解处理？它们对构建和调试有什么影响？
+5. Spring 中 `@Component`、`@Autowired`、`@Transactional` 这类注解为什么不是“声明了就一定生效”？常见失效边界有哪些？
+6. 注解驱动的能力如何做可观测性和测试，避免变成隐藏控制流？
 
-## 六、反射
+## 六、反射、代理与运行时扩展
 
-1. 什么是反射？反射能做什么？
-2. 获取 Class 对象的几种方式？Class.forName()、.class、getClass() 的区别？
-3. 通过反射创建对象的方式？Constructor.newInstance() vs Class.newInstance()？
-4. 通过反射获取和调用方法？getMethod() vs getDeclaredMethod()？
-5. 通过反射访问私有字段和方法？setAccessible(true) 的作用和安全性？
-6. 反射的性能问题？比直接调用慢多少？如何优化？（缓存 Method 对象、MethodHandle、生成代理类）
-7. 反射在框架中的应用？Spring IoC、MyBatis Mapper 代理、JUnit 测试？
-8. 反射和泛型擦除的关系？如何通过反射获取泛型的实际类型？
-9. 动态代理的实现原理？JDK 动态代理 vs CGLIB 的区别？
-10. MethodHandle 和反射的区别？Java 7 引入 MethodHandle 的意义？
+1. 反射、`MethodHandle`、动态代理、字节码增强分别适合解决什么问题？性能和可维护性如何取舍？
+2. `setAccessible(true)` 在模块化、权限、框架兼容性上有哪些限制和风险？
+3. JDK 动态代理、CGLIB、Byte Buddy 的核心差异是什么？Spring AOP 为什么会在不同场景选择不同代理方式？
+4. 反射在序列化、ORM、依赖注入、测试框架中分别承担什么角色？如何降低反射带来的性能和安全成本？
+5. 如何通过反射读取泛型、注解和方法参数名？这些信息为什么有时拿不到？
+6. 线上遇到代理对象导致的类型判断、注解读取、事务失效问题，你会如何定位？
 
-## 七、SPI 机制
+## 七、SPI 与插件化
 
-1. 什么是 SPI（Service Provider Interface）？和 API 有什么区别？
-2. Java SPI 的工作原理？ServiceLoader 的加载流程？
-3. META-INF/services 目录下的配置文件格式？
-4. Java SPI 的优缺点？（无法按需加载、不支持排序和优先级）
-5. Java SPI 的经典应用？JDBC Driver 的自动加载、SLF4J 日志门面？
-6. Dubbo SPI 和 Java SPI 的区别？Dubbo SPI 做了哪些增强？（按需加载、支持 AOP/IoC、@SPI 注解）
-7. Spring SPI 机制？spring.factories 的作用？和 Java SPI 的区别？
-8. Spring Boot 自动配置的底层就是 SPI 思想，具体怎么实现的？
-9. 如何自己实现一个简单的 SPI 机制？
-10. SPI 在你项目中有用到吗？（支付渠道扩展、设备协议适配等场景）
+1. SPI 和 API 的差异是什么？它适合解决哪类“调用方稳定、实现方可替换”的问题？
+2. `ServiceLoader` 的加载机制有什么优点和局限？在大型系统中如何处理按需加载、优先级、隔离和失败降级？
+3. JDBC Driver、日志门面、序列化协议、设备协议适配器中如何使用 SPI 思想？
+4. Spring Boot 3 的自动配置发现机制相比早期自动配置文件有什么演进？这对 Starter 设计有什么影响？
+5. 如果为项目设计一个插件扩展点，你会如何定义接口、配置、生命周期、兼容性和灰度策略？
 
-## 八、Java 8+ 新特性
+## 八、现代 Java 特性与工程实践
 
-1. Lambda 表达式的本质是什么？函数式接口？
-2. Stream API 的常用操作？中间操作和终端操作的区别？
-3. Optional 类的作用和使用方式？
-4. CompletableFuture 的使用场景和常用方法？
-5. Java 8 的日期时间 API（LocalDate、LocalDateTime）？
-6. Java 9-17 有哪些值得关注的新特性？（模块化、Records、Sealed Classes、Pattern Matching 等）
+1. Lambda 和 Stream 如何改变集合处理方式？哪些场景 Stream 反而降低可读性或性能？
+2. `CompletableFuture` 适合哪些异步编排场景？异常、超时、取消和线程池隔离要怎么处理？
+3. 新日期时间 API 如何避免 `Date` / `Calendar` 的问题？时区、夏令时、数据库字段映射要注意什么？
+4. 模块化（JPMS）为什么在业务系统中采用度不高？它在哪些库或平台工程里仍然有价值？
+5. Java 17/21 常见特性（Records、Sealed Classes、Pattern Matching、Virtual Threads）中，哪些最值得后端团队优先掌握？
+6. 升级 JDK 时你会如何评估兼容性、依赖、GC、容器镜像、性能基线和回滚方案？
 
 ## 九、IO 与 NIO
 
